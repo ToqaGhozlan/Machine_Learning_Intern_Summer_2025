@@ -1,0 +1,53 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+try:
+    df = pd.read_csv('hotel_bookings.csv')
+
+    df = df.rename(columns={
+        'booking_status': 'Booking Status',
+        'average_price': 'Average Price',
+        'room_type': 'Room Type',
+        'lead_time': 'Lead Time'
+    })
+
+    df = df.dropna(subset=['Booking Status', 'Average Price', 'Room Type', 'Lead Time'])
+    df['Average Price'] = pd.to_numeric(df['Average Price'], errors='coerce')
+    df['Lead Time'] = pd.to_numeric(df['Lead Time'], errors='coerce')
+
+    def save(fig, name):
+        fig.savefig(name, dpi=300, bbox_inches='tight')
+        plt.close()
+
+    plt.figure(figsize=(6, 6))
+    df['Booking Status'].value_counts().plot.pie(autopct='1.1f%%', colors=[' ff9999', ' 66b3ff'], explode=(0.1, 0))
+    plt.title('Cancellation Rate')
+    save(plt.gcf(), 'cancellation_rate.png')
+
+    df.groupby('Booking Status')['Average Price'].mean().plot(kind='bar', color=[' ff9999', ' 66b3ff'])
+    plt.title('Average Price by Booking Status')
+    plt.xlabel('Booking Status')
+    plt.ylabel('Average Price')
+    plt.xticks(rotation=0)
+    save(plt.gcf(), 'avg_price.png')
+
+    df['Room Type'].value_counts().plot(kind='barh', color=' 67c6b0')
+    plt.title('Room Type Distribution')
+    plt.xlabel('Bookings')
+    plt.ylabel('Room Type')
+    save(plt.gcf(), 'room_types.png')
+
+    sns.boxplot(x='Booking Status', y='Lead Time', data=df, palette=[' ff9999', ' 66b3ff'])
+    plt.title('Lead Time by Booking Status')
+    plt.xlabel('Booking Status')
+    plt.ylabel('Lead Time (Days)')
+    save(plt.gcf(), 'lead_time.png')
+
+except FileNotFoundError:
+    print(" File not found.")
+except Exception as e:
+    print("Error:", e)
+
+ 
+     
