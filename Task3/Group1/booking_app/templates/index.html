@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Booking Status Predictor</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-image: url("/static/background.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            backdrop-filter: blur(2px);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 50px auto;
+            background-color: rgba(255, 255, 255, 0.93);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: inline-block;
+            width: 170px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input, select {
+            padding: 6px;
+            width: calc(100% - 180px);
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        .error {
+            color: red;
+            font-size: 0.85em;
+            margin-left: 10px;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 1.1em;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .result h3 {
+            color: #1d3557;
+        }
+
+        .result p {
+            font-size: 1.1em;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Booking Status Predictor</h2>
+
+        {% if error %}
+            <p style="color:red;"><strong>{{ error }}</strong></p>
+        {% endif %}
+
+        <form action="/predict" method="post">
+
+            {% macro input(name, type='text', step='', min='', max='') %}
+            <div class="form-group">
+                <label>{{ name.replace('_', ' ').title() }}:</label>
+                <input 
+                    type="{{ type }}" 
+                    name="{{ name }}" 
+                    value="{{ request.form.get(name, '') }}"
+                    {% if step %} step="{{ step }}" {% endif %}
+                    {% if min %} min="{{ min }}" {% endif %}
+                    {% if max %} max="{{ max }}" {% endif %}
+                >
+                {% if errors and name in errors %}
+                    <span class="error">{{ errors[name] }}</span>
+                {% endif %}
+            </div>
+            {% endmacro %}
+
+            {{ input('adults', 'number', min='0') }}
+            {{ input('children', 'number', min='0') }}
+            {{ input('weekend_nights', 'number', min='0') }}
+            {{ input('week_nights', 'number', min='0') }}
+
+            <div class="form-group">
+                <label>Meal Type:</label>
+                <select name="meal_type">
+                    {% for val in ['Meal Plan 1', 'Meal Plan 2', 'Meal Plan 3', 'Not Selected'] %}
+                        <option value="{{ val }}" {% if request.form.get('meal_type') == val %} selected {% endif %}>{{ val }}</option>
+                    {% endfor %}
+                </select>
+                {% if errors and 'meal_type' in errors %}
+                    <span class="error">{{ errors['meal_type'] }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label>Car Parking:</label>
+                <select name="car_parking">
+                    <option value="1" {% if request.form.get('car_parking') == '1' %}selected{% endif %}>True</option>
+                    <option value="0" {% if request.form.get('car_parking') == '0' %}selected{% endif %}>False</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Room Type:</label>
+                <select name="room_type">
+                    {% for val in ['Room_Type 1', 'Room_Type 2', 'Room_Type 3', 'Room_Type 4', 'Room_Type 5', 'Room_Type 6', 'Room_Type 7'] %}
+                        <option value="{{ val }}" {% if request.form.get('room_type') == val %} selected {% endif %}>{{ val }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            {{ input('lead_time', 'number', min='0') }}
+
+            <div class="form-group">
+                <label>Market Type:</label>
+                <select name="market_type">
+                    {% for val in ['Aviation', 'Complementary', 'Corporate', 'Offline', 'Online'] %}
+                        <option value="{{ val }}" {% if request.form.get('market_type') == val %} selected {% endif %}>{{ val }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Is Repeated:</label>
+                <select name="is_repeated">
+                    <option value="1" {% if request.form.get('is_repeated') == '1' %}selected{% endif %}>True</option>
+                    <option value="0" {% if request.form.get('is_repeated') == '0' %}selected{% endif %}>False</option>
+                </select>
+            </div>
+
+            {{ input('cancelled_times', 'number', min='0') }}
+            {{ input('not_cancelled_times', 'number', min='0') }}
+            {{ input('avg_price', 'number', step='0.01', min='0') }}
+            {{ input('special_requests', 'number', min='0') }}
+
+            <input type="submit" value="Predict Booking Status">
+        </form>
+
+        {% if prediction %}
+            <div class="result">
+                <h3>Prediction: {{ prediction }}</h3>
+                <p>Probability of Booking = {{ probability }}</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
