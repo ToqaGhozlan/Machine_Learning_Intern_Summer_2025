@@ -1,0 +1,166 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Booking Cancellation Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Hotel Booking Cancellation Predictor</h1>
+        <p>Fill in the booking details to predict the likelihood of cancellation</p>
+        
+        <form id="prediction-form">
+            <div class="form-group">
+                <label for="number_of_adults">Number of Adults:</label>
+                <input type="number" id="number_of_adults" name="number_of_adults" min="1" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="number_of_children">Number of Children:</label>
+                <input type="number" id="number_of_children" name="number_of_children" min="0" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="number_of_weekend_nights">Weekend Nights:</label>
+                <input type="number" id="number_of_weekend_nights" name="number_of_weekend_nights" min="0" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="number_of_week_nights">Week Nights:</label>
+                <input type="number" id="number_of_week_nights" name="number_of_week_nights" min="0" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="lead_time">Lead Time (days):</label>
+                <input type="number" id="lead_time" name="lead_time" min="0" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="market_segment_type">Market Segment:</label>
+                <select id="market_segment_type" name="market_segment_type" required>
+                    <option value="Online">Online</option>
+                    <option value="Offline">Offline</option>
+                    <option value="Corporate">Corporate</option>
+                    <option value="Aviation">Aviation</option>
+                    <option value="Complementary">Complementary</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="repeated">Repeated Guest (0=No, 1=Yes):</label>
+                <select id="repeated" name="repeated" required>
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="average_price">Average Price (per night):</label>
+                <input type="number" id="average_price" name="average_price" min="0" step="0.01" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="special_requests">Special Requests:</label>
+                <input type="number" id="special_requests" name="special_requests" min="0" max="5" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="reservation_date">Reservation Date:</label>
+                <input type="date" id="reservation_date" name="reservation_date" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="type_of_meal">Meal Plan:</label>
+                <select id="type_of_meal" name="type_of_meal" required>
+                    <option value="Meal Plan 1">Meal Plan 1</option>
+                    <option value="Meal Plan 2">Meal Plan 2</option>
+                    <option value="Meal Plan 3">Meal Plan 3</option>
+                    <option value="Not Selected">Not Selected</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="room_type">Room Type:</label>
+                <select id="room_type" name="room_type" required>
+                    <option value="Room_Type 1">Room Type 1</option>
+                    <option value="Room_Type 2">Room Type 2</option>
+                    <option value="Room_Type 3">Room Type 3</option>
+                    <option value="Room_Type 4">Room Type 4</option>
+                    <option value="Room_Type 5">Room Type 5</option>
+                    <option value="Room_Type 6">Room Type 6</option>
+                    <option value="Room_Type 7">Room Type 7</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="car_parking_space">Car Parking Space (0=No, 1=Yes):</label>
+                <select id="car_parking_space" name="car_parking_space" required>
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="submit-btn">Predict Cancellation</button>
+        </form>
+        
+        <div id="result" class="result-container">
+            <h2>Prediction Result</h2>
+            <div id="prediction-text" class="prediction-text"></div>
+            <div id="probability-bar" class="probability-bar">
+                <div class="probability-labels">
+                    <span>Not Canceled</span>
+                    <span>Canceled</span>
+                </div>
+                <div class="bar-container">
+                    <div class="not-canceled-bar"></div>
+                    <div class="canceled-bar"></div>
+                </div>
+                <div class="probability-values">
+                    <span id="not-cancel-prob">0%</span>
+                    <span id="cancel-prob">0%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('prediction-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            fetch('/predict', {
+                method: 'POST',
+                body: new FormData(this)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('prediction-text').textContent = 'Error: ' + data.error;
+                    return;
+                }
+                
+                const resultText = `Prediction: ${data.prediction}`;
+                document.getElementById('prediction-text').textContent = resultText;
+                
+                // Update probability bars
+                document.getElementById('not-cancel-prob').textContent = `${data.not_cancel_probability}%`;
+                document.getElementById('cancel-prob').textContent = `${data.cancel_probability}%`;
+                
+                document.querySelector('.not-canceled-bar').style.width = `${data.not_cancel_probability}%`;
+                document.querySelector('.canceled-bar').style.width = `${data.cancel_probability}%`;
+                
+                // Show result container
+                document.getElementById('result').style.display = 'block';
+            })
+            .catch(error => {
+                document.getElementById('prediction-text').textContent = 'Error: ' + error;
+            });
+        });
+        
+        // Set default date to today
+        document.getElementById('reservation_date').valueAsDate = new Date();
+    </script>
+</body>
+</html>
