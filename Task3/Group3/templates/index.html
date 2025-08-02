@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hotel Booking Cancellation Predictor</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h2>🏨 Hotel Booking Cancellation Predictor</h2>
+    <form id="prediction-form">
+      <div class="form-grid">
+
+        <label>🍽️ Type of Meal
+          <select name="meal" required>
+            <option value="BB">Meal Plan 1</option>
+            <option value="FB">Meal Plan 2</option>
+            <option value="HB">Meal Plan 3</option>
+            <option value="SC">Not Selected</option>
+          </select>
+        </label>
+
+        <label>🛏️ Room Type
+          <select name="room_type" required>
+            <option value="A">Room Type 1</option><option value="B">Room Type 2</option>
+            <option value="C">Room Type 3</option><option value="D">Room Type 4</option>
+            <option value="E">Room Type 5</option><option value="F">Room Type 6</option>
+            <option value="G">Room Type 7</option>
+          </select>
+        </label>
+
+        <label>📈 Market Segment
+          <select name="market_segment" required>
+            <option value="Online">Online</option>
+            <option value="Offline">Offline</option>
+            <option value="Corporate">Corporate</option>
+            <option value="Complementary">Complementary</option>
+            <option value="Aviation">Aviation</option>
+          </select>
+        </label>
+
+        <label>📅 Reservation Date
+          <input type="date" name="reservation_date" required>
+        </label>
+
+        <label>👨‍👩‍👧‍👦 Adults
+          <input type="number" name="adults" min="1" value="2" required>
+        </label>
+
+        <label>🧒 Children
+          <input type="number" name="children" min="0" value="0" required>
+        </label>
+
+        <label>🌙 Weekend Nights
+          <input type="number" name="weekend_nights" min="0" value="1" required>
+        </label>
+
+        <label>🏙️ Week Nights
+          <input type="number" name="week_nights" min="0" value="2" required>
+        </label>
+
+        <label>🚗 Car Parking
+          <select name="car_parking">
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+          </select>
+        </label>
+
+        <label>⏱️ Lead Time (days)
+          <input type="number" name="lead_time" min="0" value="30" required>
+        </label>
+
+        <label>🔁 Repeated Guest?
+          <select name="repeated">
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+          </select>
+        </label>
+
+        <label>📞 Previous Cancellations
+          <input type="number" name="p_c" min="0" value="0" required>
+        </label>
+
+        <label>📘 Previous Non-Cancellations
+          <input type="number" name="p_not_c" min="0" value="0" required>
+        </label>
+
+        <label>💵 Average Price
+          <input type="number" name="avg_price" step="0.01" min="0" value="100" required>
+        </label>
+
+        <label>📋 Special Requests
+          <input type="number" name="special_requests" min="0" value="0" required>
+        </label>
+
+      </div>
+      <div class="submit-wrap">
+        <button type="submit">🔮 Predict</button>
+      </div>
+      <div id="result-box" class="result-box" style="display: none;">
+  <p id="prediction-result"></p>
+</div>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+    </form>
+  </div>
+</body>
+</html>
