@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hotel Booking Form</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f0f4f8;
+      color: #333;
+      margin: 0;
+      padding: 2rem;
+    }
+
+    form {
+      background-color: #fff;
+      padding: 2rem;
+      border-radius: 12px;
+      max-width: 800px;
+      margin: auto;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .form-section {
+      margin-bottom: 2rem;
+    }
+
+    .section-title {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      color: #004080;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    input, select {
+      padding: 0.6rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.8rem 1.5rem;
+      background-color: #004080;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .btn:hover {
+      background-color: #0059b3;
+    }
+  </style>
+</head>
+<body>
+  <form>
+
+    <!-- Guest Info -->
+    <div class="form-section">
+      <h3 class="section-title">👤 Guest Info</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="adults">Number of Adults</label>
+          <input type="number" name="number of adults" id="adults" required min="0" />
+        </div>
+        <div class="form-group">
+          <label for="children">Number of Children</label>
+          <input type="number" name="number of children" id="children" required min="0" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Stay Details -->
+    <div class="form-section">
+      <h3 class="section-title">🏨 Stay Details</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="weekend">Weekend Nights</label>
+          <input type="number" name="number of weekend nights" id="weekend" required min="0" />
+        </div>
+        <div class="form-group">
+          <label for="weeknights">Week Nights</label>
+          <input type="number" name="number of week nights" id="weeknights" required min="0" />
+        </div>
+        <div class="form-group">
+          <label for="leadtime">Lead Time</label>
+          <input type="number" name="lead time" id="leadtime" required min="0" />
+        </div>
+        <div class="form-group">
+          <label for="repeated">Repeated Guest</label>
+          <select name="repeated guest" id="repeated" required>
+            <option value="">Select Guest Type</option>
+            <option value="0">New Guest</option>
+            <option value="1">Repeated Guest</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Services -->
+    <div class="form-section">
+      <h3 class="section-title">🛎️ Services</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="room">Room Type</label>
+          <select name="room type" id="room" required>
+            <option value="">Select Room Type</option>
+            <option value="1">Room_type1</option>
+            <option value="2">Room_type2</option>
+            <option value="3">Room_type3</option>
+            <option value="4">Room_type4</option>
+            <option value="5">Room_type5</option>
+            <option value="6">Room_type6</option>
+            <option value="7">Room_type7</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="meal"> Meal Type</label>
+          <select name="type of meal" id="meal" required>
+            <option value="">Select Meal Type</option>
+            <option value="Meal_type1">Meal_type1</option>
+            <option value="Meal_type2">Meal_type2</option>
+            <option value="Meal_type3">Meal_type3</option>
+            <option value="Not_Selected">Not_Selected</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="parking">Car Parking Space</label>
+          <input type="number" name="car parking space" id="parking" required min="0" />
+        </div>
+
+        <div class="form-group">
+          <label for="requests"> Special Requests</label>
+          <input type="number" name="special requests" id="requests" required min="0" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Details -->
+<div class="form-section">
+  <h3 class="section-title">📊 Details</h3>
+  <div class="form-grid">
+
+    <!-- Market Segment -->
+    <div class="form-group">
+      <label for="market">Market Segment</label>
+      <select name="market segment" id="market" required>
+        <option value="">Select Market Segment</option>
+        <option value="Online Booking">Online Booking</option>
+        <option value="Offline Booking">Offline Booking</option>
+        <option value="Corporate">Corporate</option>
+        <option value="Aviation">Aviation</option>
+        <option value="Complementary">Complementary</option>
+      </select>
+    </div>
+
+    <!-- Average Price -->
+    <div class="form-group">
+      <label for="price">Average Price</label>
+      <input type="number" name="average price" id="price" required min="0" step="0.01">
+    </div>
+
+    <!-- Date of Reservation -->
+    <div class="form-group">
+      <label for="reservation-date">Date of Reservation</label>
+      <input type="date" name="reservation date" id="reservation-date" required>
+    </div>
+
+  </div>
+</div>
+
+
+    <!-- Submit -->
+    <button class="btn" type="submit">predict</button>
+  </form>
+</body>
+</html>
