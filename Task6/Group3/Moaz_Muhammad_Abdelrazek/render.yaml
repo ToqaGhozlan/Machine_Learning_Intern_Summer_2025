@@ -1,0 +1,78 @@
+# Render Blueprint Configuration for Taxi Fare Prediction ML Application
+# This file defines the complete infrastructure for deploying both backend and frontend services
+
+services:
+  # Backend API Service (FastAPI + ML Model)
+  - type: web
+    name: taxi-fare-api
+    runtime: python
+    plan: starter  # Can be upgraded to standard/pro for production
+    region: oregon  # Choose region closest to your users
+    branch: main
+    rootDir: backend
+    buildCommand: |
+      pip install --upgrade pip
+      pip install -r requirements.txt
+    startCommand: |
+      gunicorn app.main:app -w 2 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:$PORT --timeout 120 --keep-alive 5 --max-requests 1000 --max-requests-jitter 100
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: LOG_LEVEL
+        value: info
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        generateValue: true
+      - key: WORKERS
+        value: 2
+      - key: MODEL_PATH
+        value: ./models/best_taxi_fare_model.pkl
+      - key: PROCESSOR_PATH
+        value: ./models/feature_processor.pkl
+      - key: METADATA_PATH
+        value: ./models/final_model_metadata.json
+      - key: CORS_ORIGINS
+        value: "*"
+      - key: PYTHONUNBUFFERED
+        value: 1
+      - key: PYTHONDONTWRITEBYTECODE
+        value: 1
+
+  # Frontend Service (React + TypeScript)
+  - type: web
+    name: taxi-fare-frontend
+    runtime: node
+    plan: starter  # Can be upgraded to standard/pro for production
+    region: oregon  # Same region as backend for lower latency
+    branch: main
+    rootDir: frontend
+    buildCommand: |
+      npm ci
+      npm run build:production
+    startCommand: |
+      npm run serve
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: REACT_APP_API_URL
+        fromService:
+          type: web
+          name: taxi-fare-api
+          property: host
+      - key: REACT_APP_ENVIRONMENT
+        value: production
+      - key: REACT_APP_DEFAULT_LAT
+        value: 40.7589
+      - key: REACT_APP_DEFAULT_LNG
+        value: -73.9851
+      - key: REACT_APP_DEFAULT_ZOOM
+        value: 12
+      - key: GENERATE_SOURCEMAP
+        value: false
+      - key: CI
+        value: false

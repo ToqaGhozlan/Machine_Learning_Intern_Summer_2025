@@ -1,0 +1,92 @@
+# Git LFS Configuration for Taxi Fare Prediction Project
+# Machine Learning Models (Large Files)
+*.pkl filter=lfs diff=lfs merge=lfs -text
+*.joblib filter=lfs diff=lfs merge=lfs -text
+*.h5 filter=lfs diff=lfs merge=lfs -text
+*.hdf5 filter=lfs diff=lfs merge=lfs -text
+*.model filter=lfs diff=lfs merge=lfs -text
+*.bin filter=lfs diff=lfs merge=lfs -text
+# Data Files (Large)
+*.csv filter=lfs diff=lfs merge=lfs -text
+*.parquet filter=lfs diff=lfs merge=lfs -text
+*.feather filter=lfs diff=lfs merge=lfs -text
+# Compressed Archives
+*.zip filter=lfs diff=lfs merge=lfs -text
+*.tar.gz filter=lfs diff=lfs merge=lfs -text
+*.tar.bz2 filter=lfs diff=lfs merge=lfs -text
+*.7z filter=lfs diff=lfs merge=lfs -text
+# Media Files
+*.mp4 filter=lfs diff=lfs merge=lfs -text
+*.avi filter=lfs diff=lfs merge=lfs -text
+*.mov filter=lfs diff=lfs merge=lfs -text
+*.wmv filter=lfs diff=lfs merge=lfs -text
+*.mp3 filter=lfs diff=lfs merge=lfs -text
+*.wav filter=lfs diff=lfs merge=lfs -text
+*.flac filter=lfs diff=lfs merge=lfs -text
+# Image Files (Large)
+*.psd filter=lfs diff=lfs merge=lfs -text
+*.tiff filter=lfs diff=lfs merge=lfs -text
+*.tif filter=lfs diff=lfs merge=lfs -text
+# Database Files
+*.sqlite filter=lfs diff=lfs merge=lfs -text
+*.db filter=lfs diff=lfs merge=lfs -text
+# Ensure text files are handled properly
+*.md text
+*.txt text
+*.py text
+*.js text
+*.jsx text
+*.ts text
+*.tsx text
+*.json text
+*.yml text
+*.yaml text
+*.xml text
+*.html text
+*.css text
+*.scss text
+*.sass text
+*.less text
+*.sql text
+*.sh text eol=lf
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+# Docker files
+Dockerfile text
+docker-compose.yml text
+docker-compose.yaml text
+# Configuration files
+*.ini text
+*.cfg text
+*.conf text
+*.config text
+# Requirements and package files
+requirements.txt text
+package.json text
+package-lock.json text
+yarn.lock text
+Pipfile text
+Pipfile.lock text
+pyproject.toml text
+# License and documentation
+LICENSE text
+README.md text
+CHANGELOG.md text
+CONTRIBUTING.md text
+*.rst text
+# Git files
+.gitignore text
+.gitattributes text
+.gitmodules text
+# CI/CD files
+.github/**/* text
+.gitlab-ci.yml text
+.travis.yml text
+appveyor.yml text
+azure-pipelines.yml text
+Jenkinsfile text
+# Environment files
+.env.example text
+.env.template text
+# Specific project files
+backend/models/best_taxi_fare_model.pkl filter=lfs diff=lfs merge=lfs -text

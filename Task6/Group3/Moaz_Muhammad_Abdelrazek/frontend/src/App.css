@@ -1,0 +1,60 @@
+.App {
+  text-align: left;
+}
+
+.App-header {
+  background-color: #282c34;
+  padding: 20px;
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+/* Custom styles for the taxi fare prediction app */
+.prediction-form {
+  max-width: 400px;
+}
+
+.results-display {
+  margin-top: 20px;
+}
+
+.map-container {
+  height: 500px;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Loading animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .map-container {
+    height: 400px;
+  }
+}
+
+/* Custom Material-UI overrides */
+.MuiPaper-root {
+  border-radius: 12px !important;
+}
+
+.MuiButton-root {
+  border-radius: 8px !important;
+  text-transform: none !important;
+}
+
+.MuiChip-root {
+  border-radius: 16px !important;
+}

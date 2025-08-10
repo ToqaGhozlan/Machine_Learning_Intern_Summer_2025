@@ -1,0 +1,49 @@
+# Taxi Fare Prediction API - Python Dependencies
+# Updated for Render deployment with Python 3.11+ support
+# Latest versions as of January 2025
+
+# Core FastAPI and web framework dependencies
+fastapi==0.115.6
+uvicorn[standard]==0.32.1
+pydantic==2.10.3
+pydantic-settings==2.7.0
+
+# Machine Learning and Data Processing
+scikit-learn==1.6.0
+pandas==2.2.3
+numpy==2.2.1
+joblib==1.4.2
+
+# HTTP and API utilities
+httpx==0.28.1
+requests==2.32.3
+
+# System monitoring and metrics
+psutil==6.1.0
+
+# Logging and configuration
+python-multipart==0.0.20
+python-json-logger==2.0.7
+
+# Development and testing
+pytest==8.3.4
+pytest-asyncio==0.25.0
+pytest-cov==6.0.0
+
+# Production deployment
+gunicorn==23.0.0
+
+# Security and CORS
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+
+# Environment and configuration
+python-dotenv==1.0.1
+
+# Additional utilities
+typing-extensions==4.12.2
+email-validator==2.2.0
+
+# Additional production dependencies for Render
+aiofiles==24.1.0
+python-dateutil==2.9.0.post0
