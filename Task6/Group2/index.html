@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fare Prediction</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container">
+  <h2>Fare Amount Prediction</h2>
+  <form id="fareForm">
+    <label for="distance">Distance (km)</label>
+    <input type="number" id="distance" name="distance" required>
+
+    <label for="year">Year</label>
+    <input type="number" id="year" name="year" required>
+
+    <label for="month">Month</label>
+    <input type="number" id="month" name="month" min="1" max="12" required>
+
+    <label for="pickup_longitude">Pickup Longitude</label>
+    <input type="number" id="pickup_longitude" name="pickup_longitude" required>
+
+    <label for="pickup_latitude">Pickup Latitude</label>
+    <input type="number" id="pickup_latitude" name="pickup_latitude" required>
+
+    <label for="dropoff_longitude">Dropoff Longitude</label>
+    <input type="number" id="dropoff_longitude" name="dropoff_longitude" required>
+
+    <label for="dropoff_latitude">Dropoff Latitude</label>
+    <input type="number" id="dropoff_latitude" name="dropoff_latitude" required>
+
+    <button type="submit">Predict Fare</button>
+
+    <div class="result" id="resultBox"></div>
+  </form>
+</div>
+<!-- In templates/index.html -->
+<script>
+  document.getElementById('fareForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    
+    // Validate inputs
+    const inputs = [
+      'distance', 'year', 'month',
+      'pickup_longitude', 'pickup_latitude',
+      'dropoff_longitude', 'dropoff_latitude'
+    ];
+    
+    let valid = true;
+    inputs.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el.value || isNaN(el.value)) {
+        el.style.border = "1px solid red";
+        valid = false;
+      } else {
+        el.style.border = "";
+      }
+    });
+    
+    if (!valid) {
+      document.getElementById("resultBox").textContent = "Please fill all fields with valid numbers";
+      return;
+    }
+
+    // Prepare data
+    const formData = {
+      distance: parseFloat(document.getElementById('distance').value),
+      year: parseInt(document.getElementById('year').value),
+      month: parseInt(document.getElementById('month').value),
+      pickup_longitude: parseFloat(document.getElementById('pickup_longitude').value),
+      pickup_latitude: parseFloat(document.getElementById('pickup_latitude').value),
+      dropoff_longitude: parseFloat(document.getElementById('dropoff_longitude').value),
+      dropoff_latitude: parseFloat(document.getElementById('dropoff_latitude').value)
+    };
+
+    // Update URL to relative path
+    fetch('/predict', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(formData)
+    })
+    .then(response => {
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      return response.json();
+    })
+    .then(data => {
+      if (data.fare_amount !== undefined) {
+        document.getElementById("resultBox").textContent = `Predicted fare: $${data.fare_amount.toFixed(2)}`;
+      } else {
+        document.getElementById("resultBox").textContent = "Error: " + (data.error || "Unknown error");
+      }
+    })
+    .catch(error => {
+      document.getElementById("resultBox").textContent = "Request failed: " + error.message;
+    });
+  });
+</script>
+
+</body>
+</html>
+
