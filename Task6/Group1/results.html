@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Fare Prediction Result</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #e0f7fa, #e1bee7);
+            color: #333;
+            padding: 40px;
+            text-align: center;
+            transition: background 0.5s ease, color 0.5s ease;
+        }
+
+        .container {
+            background-color: #ffffffcc;
+            display: inline-block;
+            padding: 30px 50px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            transition: background 0.4s ease;
+        }
+
+        h1 {
+            color: #4a148c;
+            font-size: 2em;
+        }
+
+        .result {
+            font-size: 2em;
+            color: #2e7d32;
+            margin: 25px 0;
+        }
+
+        .button {
+            margin-top: 20px;
+            padding: 12px 25px;
+            background-color: #7b1fa2;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        .button:hover {
+            background-color: #9c27b0;
+            transform: scale(1.05);
+        }
+
+        .toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .dark-mode {
+            background: linear-gradient(to right, #1c1c1c, #2a2a2a);
+            color: #f1f1f1;
+        }
+
+        .dark-mode .container {
+            background-color: #2f2f2fcc;
+        }
+
+        .dark-mode .result {
+            color: #81c784;
+        }
+
+        .dark-mode .button {
+            background-color: #8e24aa;
+        }
+
+        .dark-mode .button:hover {
+            background-color: #ba68c8;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="toggle" onclick="toggleDarkMode()">🌙</div>
+
+    <div class="container">
+        <h1>Fare Prediction Result</h1>
+        <div class="result">
+            Your predicted fare is: <strong>${{ prediction|floatformat:2 }}</strong>
+        </div>
+        <form action="{% url 'home' %}">
+            <button class="button">🔙 Predict Again</button>
+        </form>
+    </div>
+
+    <script>
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            document.querySelector('.toggle').classList.toggle('active');
+        }
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Fare Predictor</title>
+    <style>
+        :root {
+            --main-bg: linear-gradient(to right, #e0f7fa, #e1bee7);
+            --text-color: #333;
+            --card-bg: #ffffffcc;
+            --accent: #7b1fa2;
+            --accent-hover: #9c27b0;
+            --highlight: #2e7d32;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: var(--main-bg);
+            color: var(--text-color);
+            padding: 40px;
+            text-align: center;
+            transition: background 0.6s ease, color 0.6s ease;
+        }
+
+        h1 {
+            color: #4a148c;
+            margin-bottom: 10px;
+        }
+
+        form {
+            background-color: var(--card-bg);
+            display: inline-block;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.6s ease;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            color: #6a1b9a;
+        }
+
+        select,
+        input[type="number"] {
+            padding: 10px;
+            width: 250px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 1em;
+            background: linear-gradient(135deg, #ede7f6, #e1bee7);
+            color: #4a148c;
+            transition: all 0.4s ease, background-position 0.8s ease;
+            background-size: 200% 200%;
+        }
+
+        select:hover,
+        input[type="number"]:hover {
+            background-position: right center;
+            box-shadow: 0 0 8px #ab47bc88;
+            transform: scale(1.02);
+        }
+
+        select:focus,
+        input[type="number"]:focus {
+            border-color: #7e57c2;
+            outline: none;
+            box-shadow: 0 0 5px #7e57c280;
+        }
+
+        input[type="submit"] {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1em;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: var(--accent-hover);
+            transform: scale(1.05);
+        }
+
+        footer {
+            margin-top: 50px;
+            color: #777;
+        }
+
+        h2 {
+            color: var(--highlight);
+            margin-top: 30px;
+        }
+
+        .dark-mode {
+            --main-bg: linear-gradient(to right, #1c1c1c, #2a2a2a);
+            --text-color: #f1f1f1;
+            --card-bg: #333333cc;
+        }
+
+        .toggle-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: transparent;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.4s ease, color 0.4s ease;
+            color: #555;
+        }
+
+        .toggle-button:hover {
+            transform: rotate(180deg) scale(1.2);
+            color: #111;
+        }
+
+        canvas {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <button class="toggle-button" onclick="toggleDarkMode()" title="Toggle Dark Mode">&#9790;</button>
+
+    <h1>Taxi Fare Predictor</h1>
+    <p>Enter trip details to estimate the fare amount</p>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <!-- Distance Input -->
+        <label for="distance">Distance (km):</label>
+        <input type="number" step="0.01" min="0" name="distance" id="distance" placeholder="Enter distance" required>
+
+        <!-- Car Condition -->
+        <label for="car_condition">Car Condition:</label>
+        <select name="car_condition" id="car_condition">
+            <option value="0">Bad</option>
+            <option value="1">Good</option>
+            <option value="2">Excellent</option>
+        </select>
+
+        <!-- Weather -->
+        <label for="weather">Weather:</label>
+        <select name="weather" id="weather">
+            <option value="0">Sunny</option>
+            <option value="1">Rainy</option>
+            <option value="2">Stormy</option>
+        </select>
+
+        <!-- Traffic Condition -->
+        <label for="traffic">Traffic Condition:</label>
+        <select name="traffic" id="traffic">
+            <option value="0">Flow Traffic</option>
+            <option value="1">Medium Traffic</option>
+            <option value="2">Heavy Traffic</option>
+        </select>
+
+        <br>
+        <input type="submit" value="Predict Fare">
+    </form>
+
+    {% if prediction %}
+    <h2>Predicted Fare: ${{ prediction|floatformat:2 }}</h2>
+    <canvas id="resultChart" width="300" height="200"></canvas>
+    <script>
+        window.onload = function () {
+            const canvas = document.getElementById('resultChart');
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#7b1fa2';
+            const height = {{ prediction| floatformat: 2
+        }} * 5;
+        ctx.fillRect(100, 200 - height, 100, height);
+        ctx.font = "16px Arial";
+        ctx.fillStyle = '#333';
+        ctx.fillText("Fare: ${{ prediction|floatformat:2 }}", 95, 190 - height);
+        };
+    </script>
+    {% endif %}
+
+    <footer>
+        <p>&copy; 2025 Fare Predictor</p>
+    </footer>
+
+    <script>
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark-mode");
+        }
+    </script>
+</body>
+
+</html>
