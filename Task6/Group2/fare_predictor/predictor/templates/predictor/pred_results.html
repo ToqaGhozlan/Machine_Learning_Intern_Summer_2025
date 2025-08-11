@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prediction Results</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: url('/static/image/bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.75);
+            padding: 40px;
+            border-radius: 15px;
+            width: 85%;
+            max-width: 900px;
+            margin: 10px auto;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 40px;
+        }
+
+        .predictions {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+        }
+
+        .prediction-block {
+            text-align: center;
+        }
+
+        .prediction-block h2 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .prediction-block p {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .avg {
+            text-align: center;
+            font-size: 2em;
+            font-weight: bold;
+            margin-top: 40px;
+            margin-bottom: 50px;
+        }
+
+        .back-btn {
+            display: block;
+            width: fit-content;
+            margin: 0 auto;
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .back-btn:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Prediction Results</h1>
+
+        <div class="predictions">
+            {% for model, pred in predictions.items %}
+            <div class="prediction-block">
+                <h2>{{ model }} Model</h2>
+                <p>{{ pred }} $</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="avg">
+            <h2>Average Prediction</h1>
+             <p>{{ avg_prediction }} $<p>
+        </div>
+
+        <a href="{% url 'home' %}" class="back-btn">Back to Home</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>Fare Predictor</title>
+    <style>
+        body {
+            background-image: url("{% static 'image/bg.jpg' %}");
+            background-size: cover; ;
+            font-family: Arial, sans-serif;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.75);
+            padding: 40px;
+            border-radius: 15px;
+            width: 85%;
+            max-width: 900px;
+            margin: 10px auto;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .form-group {
+            flex: 0 0 48%;
+            margin-bottom: 20px;
+        }
+
+        .form-group-full {
+            flex: 0 0 100%;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 5px;
+            border: none;
+            font-size: 14px;
+        }
+
+        .required-star {
+            color: red;
+        }
+
+        input[type="submit"] {
+            background-color: #00aaff;
+            color: white;
+            padding: 12px;
+            font-size: 16px;
+            margin-top: 20px;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .result {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #00ffcc;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Fare Predictor</h1>
+    <form method="POST" action="{% url 'fare_predict' %}">
+        {% csrf_token %}
+
+        <!-- Required Fields -->
+        <div class="form-group">
+            <label>Passenger Count <span class="required-star">*</span></label>
+            <input type="number" name="passenger_count" min="1" max="10" required>
+        </div>
+
+        <div class="form-group">
+            <label>Distance (km) <span class="required-star">*</span></label>
+            <input type="number" step="0.01" name="distance" min="0" required>
+        </div>
+
+        <div class="form-group">
+            <label>Bearing (rad) <span class="required-star">*</span></label>
+            <input type="number" step="0.00001" name="bearing" min="-3.14159" max="3.14159" required>
+        </div>
+
+        <div class="form-group">
+            <label>Weather <span class="required-star">*</span></label>
+            <select name="Weather" required>
+                <option value="">-- Select --</option>
+                <option value="sunny">Sunny</option>
+                <option value="cloudy">Cloudy</option>
+                <option value="rainy">Rainy</option>
+                <option value="stormy">Stormy</option>
+                <option value="windy">Windy</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Traffic Condition <span class="required-star">*</span></label>
+            <select name="Traffic" required>
+                <option value="">-- Select --</option>
+                <option value="Congested">Congested</option>
+                <option value="Dense">Dense</option>
+                <option value="Flow">Flow</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Car Condition <span class="required-star">*</span></label>
+            <select name="car_condition" required>
+                <option value="">-- Select --</option>
+                <option value="Excellent">Excellent</option>
+                <option value="Very Good">Very Good</option>
+                <option value="Good">Good</option>
+                <option value="Bad">Bad</option>
+            </select>
+        </div>
+
+        <!-- Optional Fields -->
+        <div class="form-group">
+            <label>User Name</label>
+            <input type="text" name="user_name">
+        </div>
+
+        <div class="form-group">
+            <label>Driver Name</label>
+            <input type="text" name="driver_name">
+        </div>
+
+        <div class="form-group">
+            <label>Key</label>
+            <input type="text" name="key">
+        </div>
+
+        <div class="form-group">
+            <label>Pickup Datetime</label>
+            <input type="datetime-local" name="pickup_datetime">
+        </div>
+
+        <div class="form-group">
+            <label>Pickup Longitude</label>
+            <input type="number" step="0.000001" name="pickup_longitude">
+        </div>
+
+        <div class="form-group">
+            <label>Pickup Latitude</label>
+            <input type="number" step="0.000001" name="pickup_latitude">
+        </div>
+
+        <div class="form-group">
+            <label>Dropoff Longitude</label>
+            <input type="number" step="0.000001" name="dropoff_longitude">
+        </div>
+
+        <div class="form-group">
+            <label>Dropoff Latitude</label>
+            <input type="number" step="0.000001" name="dropoff_latitude">
+        </div>
+
+        <div class="form-group">
+            <label>Hour<span style="color:red;">*</span></label>
+            <input type="number" name="hour" min="0" max="23" required>
+        </div>
+
+        <div class="form-group">
+            <label>Weekday <span style="color:red;">*</span></label>
+            <select name="weekday" required>
+                <option value="">-- Select Weekday --</option>
+                <option value="0">Saturday</option>
+                <option value="1">Sunday</option>
+                <option value="2">Monday</option>
+                <option value="3">Tuesday</option>
+                <option value="4">Wednesday</option>
+                <option value="5">Thursday</option>
+                <option value="6">Friday</option>
+            </select>
+        </div>
+
+
+        <div class="form-group">
+            <label>Month</label>
+            <select name="month">
+                <option value="">-- Select Month --</option>
+                {% for month in "1,2,3,4,5,6,7,8,9,10,11,12"|cut:"," %}
+                    <option value="{{ month }}">{{ month }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Year</label>
+            <input type="number" name="year" min="2000" max="2100">
+        </div>
+
+        <div class="form-group">
+            <label>JFK Airport Distance<span style="color:red;">*</span></label>
+            <input type="number" step="0.01" name="jfk_airport_distance" required>
+        </div>
+
+        <div class="form-group">
+            <label>EWR Airport Distance<span style="color:red;">*</span></label>
+            <input type="number" step="0.01" name="ewr_airport_distance" required>
+        </div>
+
+        <div class="form-group">
+            <label>LGA Airport Distance<span style="color:red;">*</span></label>
+            <input type="number" step="0.01" name="lga_airport_distance" required>
+        </div>
+
+        <div class="form-group">
+            <label>Statue of Liberty Distance<span style="color:red;">*</span></label>
+            <input type="number" step="0.01" name="statue_of_liberty_distance" required>
+        </div>
+
+        <div class="form-group">
+            <label>NYC Center Distance<span style="color:red;">*</span></label>
+            <input type="number" step="0.01" name="nyc_center_distance" required>
+        </div>
+
+        <!-- Submit -->
+        <div class="form-group-full">
+            <input type="submit" value="Predict Fare">
+        </div>
+
+    </form>
+
+    {% if prediction %}
+        <div class="result">Predicted Fare: ${{ prediction }}</div>
+    {% endif %}
+</div>
+</body>
+</html>
