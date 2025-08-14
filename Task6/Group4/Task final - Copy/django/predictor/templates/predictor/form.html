@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Expect the price of the trip</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f4f4f4; }
+        form { background: white; padding: 20px; border-radius: 8px; max-width: 400px; margin: auto; }
+        input, select { width: 100%; padding: 8px; margin: 8px 0; }
+        button { background: #28a745; color: white; padding: 10px; border: none; cursor: pointer; }
+        button:hover { background: #218838; }
+        .result { margin-top: 20px; padding: 10px; background: #e9ecef; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h2>Expect the price of the trip</h2>
+    <form method="post">
+        {% csrf_token %}
+        
+        <label>Car Condition:</label>
+        <select name="car_condition">
+            {% for cc in car_condition_choices %}
+                <option value="{{ cc }}">{{ cc }}</option>
+            {% endfor %}
+        </select>
+
+        <label>Weather:</label>
+        <select name="weather">
+            {% for w in weather_choices %}
+                <option value="{{ w }}">{{ w }}</option>
+            {% endfor %}
+        </select>
+
+        <label>Passenger Count:</label>
+        <input type="number" name="passenger_count" min="1" required>
+
+        <label>Hour:</label>
+        <input type="number" name="hour" min="0" max="23" required>
+
+        <label>Day:</label>
+        <input type="number" name="day" min="1" max="31" required>
+
+        <label>Month:</label>
+        <input type="number" name="month" min="1" max="12" required>
+
+        <label>Weekday:</label>
+        <input type="number" name="weekday" min="0" max="6" required>
+
+        <label>Year:</label>
+        <input type="number" name="year" min="2000" required>
+
+        <label>Distance:</label>
+        <input type="number" step="0.01" name="distance" required>
+
+        <label>Traffic Condition:</label>
+        <select name="traffic">
+            {% for t in traffic_choices %}
+                <option value="{{ t }}">{{ t }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Predict</button>
+    </form>
+
+    {% if result %}
+        <div class="result">
+            <h3>Fare amount: {{ result }}</h3>
+        </div>
+    {% endif %}
+</body>
+</html>
