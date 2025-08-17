@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fare Amount Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7f9;
+            display: flex;
+            justify-content: center;
+            padding: 30px;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+            width: 350px;
+        }
+        input, button {
+            margin: 5px 0;
+            padding: 8px;
+            width: 100%;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        h2 {
+            text-align: center;
+        }
+        h3 {
+            text-align: center;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Fare Amount Prediction</h2>
+        <form method="post">
+            {% csrf_token %}
+            <label>Pickup Longitude:</label><input type="text" name="feature1" required><br>
+            <label>Pickup Latitude:</label><input type="text" name="feature2" required><br>
+            <label>Dropoff Longitude:</label><input type="text" name="feature3" required><br>
+            <label>Dropoff Latitude:</label><input type="text" name="feature4" required><br>
+            <label>Passenger Count:</label><input type="text" name="feature5" required><br>
+            <label>Hour:</label><input type="text" name="feature6" required><br>
+            <label>Day:</label><input type="text" name="feature7" required><br>
+            <label>Weekday:</label><input type="text" name="feature8" required><br>
+            <label>Year:</label><input type="text" name="feature9" required><br>
+            <label>JFK Distance:</label><input type="text" name="feature10" required><br>
+            <label>EWR Distance:</label><input type="text" name="feature11" required><br>
+            <label>LGA Distance:</label><input type="text" name="feature12" required><br>
+            <label>SOL Distance:</label><input type="text" name="feature13" required><br>
+            <label>NYC Distance:</label><input type="text" name="feature14" required><br>
+            <label>Trip Distance:</label><input type="text" name="feature15" required><br>
+            <label>Bearing:</label><input type="text" name="feature16" required><br>
+            <label>Weekday Name (encoded):</label><input type="text" name="feature17" required><br>
+            <label>Car Condition Type (encoded):</label><input type="text" name="feature18" required><br>
+            <label>Traffic Condition Type (encoded):</label><input type="text" name="feature19" required><br>
+            <label>Weather Type (encoded):</label><input type="text" name="feature20" required><br>
+            <button type="submit">Predict</button>
+        </form>
+
+        {% if prediction %}
+            <h3>Predicted Fare: ${{ prediction|floatformat:2 }}</h3>
+        {% endif %}
+
+        {% if error %}
+            <h3 style="color:red">{{ error }}</h3>
+        {% endif %}
+    </div>
+</body>
+</html>
