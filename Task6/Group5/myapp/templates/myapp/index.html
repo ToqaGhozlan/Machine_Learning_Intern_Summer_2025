@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Taxi Fare Prediction</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="taxi" patternUnits="userSpaceOnUse" width="50" height="50"><rect width="50" height="50" fill="none"/><path d="M10,25 Q25,10 40,25 Q25,40 10,25" fill="rgba(255,255,255,0.03)"/></pattern></defs><rect width="100" height="100" fill="url(%23taxi)"/></svg>') repeat;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ffd700 0%, #ffb347 100%);
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '🚕';
+            position: absolute;
+            font-size: 60px;
+            opacity: 0.2;
+            right: -10px;
+            top: -10px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+
+        h2 {
+            color: #333;
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-top: 8px;
+            font-weight: 400;
+        }
+
+        form {
+            padding: 30px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #fafbfc;
+            outline: none;
+        }
+
+        input[type="number"]:focus {
+            border-color: #667eea;
+            background: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+        }
+
+        input[type="number"]::placeholder {
+            color: #a0a6b1;
+            font-weight: 400;
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: #a0a6b1;
+            pointer-events: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
+        }
+
+        button:active {
+            transform: translateY(-1px);
+        }
+
+        /* Modal styles */
+        /* .modal {
+            display: {% if xgb_result and linear_result %}flex{% else %}none{% endif %};
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        } */
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            margin: 20px;
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            animation: modalSlide 0.4s ease-out;
+            position: relative;
+        }
+
+        @keyframes modalSlide {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .modal-content::before {
+            content: '💰';
+            font-size: 50px;
+            display: block;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .modal-content h3 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+
+        .prediction-result {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+            font-size: 18px;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+            transform: translateX(0);
+            animation: slideInLeft 0.6s ease-out forwards;
+        }
+
+        .prediction-result:nth-child(odd) {
+            animation: slideInRight 0.6s ease-out forwards;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .close-btn {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            margin-top: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .close-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(220, 53, 69, 0.3);
+        }
+
+        .error {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            text-align: center;
+            font-weight: 500;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                margin: 10px;
+            }
+            
+            .header {
+                padding: 25px 20px;
+            }
+            
+            h2 {
+                font-size: 24px;
+            }
+        }
+
+        /* Floating elements animation */
+        .floating-element {
+            position: absolute;
+            pointer-events: none;
+            font-size: 20px;
+            opacity: 0.1;
+            animation: floatAround 15s linear infinite;
+        }
+
+        @keyframes floatAround {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-element" style="left: 10%; animation-delay: -2s;">🚖</div>
+    <div class="floating-element" style="left: 80%; animation-delay: -8s;">🚕</div>
+    <div class="floating-element" style="left: 50%; animation-delay: -5s;">🚗</div>
+
+    <div class="container">
+        <div class="header">
+            <h2>Taxi Fare Prediction</h2>
+            <div class="subtitle">Get accurate fare estimates powered by AI</div>
+        </div>
+
+        <form method="POST" onsubmit="showLoading()">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="form-group">
+                    <input type="number" step="any" name="pickup_longitude" placeholder="Pickup Longitude" required>
+                    <span class="input-icon">📍</span>
+                </div>
+                <div class="form-group">
+                    <input type="number" step="any" name="pickup_latitude" placeholder="Pickup Latitude" required>
+                    <span class="input-icon">📍</span>
+                </div>
+                <div class="form-group">
+                    <input type="number" step="any" name="dropoff_longitude" placeholder="Dropoff Longitude" required>
+                    <span class="input-icon">🎯</span>
+                </div>
+                <div class="form-group">
+                    <input type="number" step="any" name="dropoff_latitude" placeholder="Dropoff Latitude" required>
+                    <span class="input-icon">🎯</span>
+                </div>
+                <div class="form-group">
+                    <input type="number" step="any" name="passenger_count" placeholder="passenger_count" required>
+                    <span class="input-icon">🔢</span>
+                </div>
+                <div class="form-group">
+                    <input type="number" step="any" name="hour" placeholder="hour" required>
+                    <span class="input-icon">🕰️</span>
+                </div>
+                <div class="form-group">
+                    <input type="number" step="any" name="day" placeholder="day" required>
+                    <span class="input-icon">🕰️</span>
+                </div>
+                <div class="form-group">
+                    <input type="number" step="any" name="month" placeholder="month" required>
+                    <span class="input-icon">🕰️</span>
+                </div>
+                <div class="form-group">
+                    <input type="number" step="any" name="weekday" placeholder="weekday" required>
+                    <span class="input-icon">🕰️</span>
+                </div>
+                <div class="form-group">
+                    <input type="number" step="any" name="year" placeholder="year" required>
+                    <span class="input-icon">🕰️</span>
+                </div>
+                <div class="form-group">
+                    <input type="number" step="any" name="distance" placeholder="distance" required>
+                    <span class="input-icon">🛣️</span>
+                </div>
+                <div class="form-group">
+                    <input type="number" step="any" name="bearing " placeholder="bearing " required>
+                    <span class="input-icon">📐</span>
+                </div>
+                <div class="form-group">
+                    <input type="number" step="any" name="jfk_dist" placeholder="Distance to JFK" required>
+                    <span class="input-icon">✈️</span>
+                </div>
+                <div class="form-group">
+                    <input type="number" step="any" name="ewr_dist" placeholder="Distance to EWR" required>
+                    <span class="input-icon">✈️</span>
+                </div>
+                <div class="form-group">
+                    <input type="number" step="any" name="lga_dist" placeholder="Distance to LGA" required>
+                    <span class="input-icon">✈️</span>
+                </div>
+                <div class="form-group">
+                    <input type="number" step="any" name="sol_dist" placeholder="Distance to Statue of Liberty" required>
+                    <span class="input-icon">🗽</span>
+                </div>
+                <div class="form-group">
+                    <input type="number" step="any" name="nyc_dist" placeholder="Distance to NYC" required>
+                    <span class="input-icon">🏙️</span>
+                </div>
+            </div>
+
+            <button type="submit">Predict Fare</button>
+
+            <div class="loading" id="loadingSpinner">
+                <div class="spinner"></div>
+                <p>Calculating your fare...</p>
+            </div>
+        </form>
+
+
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+    </div>
+
+    <!-- Modal Popup for predictions -->
+    <div class="modal" id="predictionModal">
+        <div class="modal-content">
+            <h3>Predicted Fares</h3>
+            <div class="prediction-result">
+                <strong>XGBoost:</strong> ${{ xgb_result }}
+            </div>
+            <div class="prediction-result">
+                <strong>Linear Regression:</strong> ${{ linear_result }}
+            </div>
+            <button class="close-btn" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        function closeModal() {
+            document.getElementById('predictionModal').style.display = 'none';
+        }
+
+        function showLoading() {
+            document.getElementById('loadingSpinner').style.display = 'block';
+        }
+
+        // Add some interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('input[type="number"]');
+            
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.style.transform = 'scale(1.02)';
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentElement.style.transform = 'scale(1)';
+                });
+            });
+        });
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('predictionModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
